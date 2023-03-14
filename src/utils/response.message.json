@@ -1,0 +1,12 @@
+{
+    "signup": {
+        "success": {
+            "th": "สมัครบัญชีสำเร็จ",
+            "en": "Sign up successfully"
+        },
+        "found_username": {
+            "th": "มีชื่อบัญชีนี้อยู่แล้ว",
+            "en": "Username already exist"
+        }
+    }
+}

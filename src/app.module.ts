@@ -4,6 +4,8 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { UserModule } from './persistence/user/user.module';
+import { AuthModule } from './auth/auth.module';
+import { BusinessLogicModule } from './business_logic/business_logic.module';
 
 @Module({
   imports: [
@@ -20,7 +22,7 @@ import { UserModule } from './persistence/user/user.module';
       database: process.env.DB_NAME,
       autoLoadEntities: true,
       migrationsRun: true,
-    }), UserModule],
+    }), UserModule, AuthModule, BusinessLogicModule],
   controllers: [AppController],
   providers: [AppService],
 })
