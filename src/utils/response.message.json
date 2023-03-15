@@ -1,12 +1,46 @@
 {
     "signup": {
         "success": {
-            "th": "สมัครบัญชีสำเร็จ",
+            "th": "ลงทะเบียนสำเร็จ",
             "en": "Sign up successfully"
         },
         "found_username": {
             "th": "มีชื่อบัญชีนี้อยู่แล้ว",
             "en": "Username already exist"
+        }
+    },
+    "signin": {
+        "success": {
+            "th": "เข้าสู่ระบบสำเร็จ",
+            "en": "Sign in successfully"
+        },
+        "not_found_username": {
+            "th": "ไม่พบบัญชี",
+            "en": "Username is not exist"
+        },
+        "wrong_password": {
+            "th": "รหัสผ่านไม่ถูกต้อง",
+            "en": "Password is not correct"
+        }
+    },
+    "signout": {
+        "success": {
+            "th": "ออกจากระบบสำเร็จ",
+            "en": "Sign out successfully"
+        }
+    },
+    "refreshtoken": {
+        "success": {
+            "th": "เข้าสู่ระบบสำเร็จ",
+            "en": "Sign in successfully"
+        },
+        "not_found_username": {
+            "th": "ไม่พบบัญชี",
+            "en": "Username is not exist"
+        },
+        "rt_not_matches": {
+            "th": "โทเค็นไม่ตรง",
+            "en": "Refresh token is not matches"
         }
     }
 }

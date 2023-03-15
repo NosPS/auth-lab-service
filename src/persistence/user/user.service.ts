@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -9,18 +9,35 @@ import { Repository } from 'typeorm';
 export class UserService {
   constructor(
     @InjectRepository(UserEntity)
-    private readonly UserRepository: Repository<UserEntity>,
+    private readonly userRepository: Repository<UserEntity>,
   ) { }
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  async create(createUserDto: CreateUserDto): Promise<UserEntity | any> {
+    try {
+      const userEntity: UserEntity = new UserEntity();
+      userEntity.username = createUserDto.username;
+      userEntity.password = createUserDto.password;
+      return await this.userRepository.save(userEntity);
+    } catch (error: any) {
+      throw new BadRequestException(
+        error.message,
+      );
+    }
+  }
+
+  async updateRefreshToken(user_id: string, refresh_token: string) {
+    return await this.userRepository.update(user_id, { refresh_token: refresh_token });
   }
 
   findAll() {
     return `This action returns all user`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOneByUsername(username: string) {
+    return await this.userRepository.findOne({ where: { username: username } });
+  }
+
+  async findOneByUserId(user_id: string) {
+    return await this.userRepository.findOne({ where: { user_id: user_id } });
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {

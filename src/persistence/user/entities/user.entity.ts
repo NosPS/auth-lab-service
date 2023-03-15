@@ -4,7 +4,7 @@ import { BaseEntity, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, U
 @Unique(['username'])
 export class UserEntity {
     @PrimaryGeneratedColumn('uuid')
-    id: string;
+    user_id: string;
     @Column({ nullable: false })
     username: string;
     @Column({ nullable: false })
