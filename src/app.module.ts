@@ -6,6 +6,8 @@ import { ConfigModule } from '@nestjs/config';
 import { UserModule } from './persistence/user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { BusinessLogicModule } from './business_logic/business_logic.module';
+import { APP_GUARD } from '@nestjs/core';
+import { AccessTokenGuard } from 'src/middleware/guards/access_token.guard';
 
 @Module({
   imports: [
@@ -24,6 +26,9 @@ import { BusinessLogicModule } from './business_logic/business_logic.module';
       migrationsRun: true,
     }), UserModule, AuthModule, BusinessLogicModule],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [{
+    provide: APP_GUARD,
+    useClass: AccessTokenGuard,
+  }, AppService],
 })
 export class AppModule { }

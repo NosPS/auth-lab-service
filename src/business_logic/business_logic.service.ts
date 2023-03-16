@@ -1,5 +1,5 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
-import { CreateAuthDto } from 'src/auth/dto/create-auth.dto';
+import { SignInDto } from 'src/auth/dto/signin.dto';
 import AuthModel from 'src/auth/models/auth.model';
 import { CreateUserDto } from 'src/persistence/user/dto/create-user.dto';
 import { UserEntity } from 'src/persistence/user/entities/user.entity';
@@ -8,6 +8,7 @@ import { JwtService } from '@nestjs/jwt/dist';
 import * as responseMessage from 'src/utils/response.message.json';
 import * as bcrypt from 'bcrypt';
 import TokensModel from './models/tokens.model';
+import { SignUpDto } from 'src/auth/dto/signup.dto';
 
 @Injectable()
 export class BusinessLogicService {
@@ -16,14 +17,14 @@ export class BusinessLogicService {
     private jwtService: JwtService,
   ) { }
 
-  async signUp(locale: string, createAuthDto: CreateAuthDto): Promise<AuthModel<any>> {
-    const existUserEntity: UserEntity = await this.userService.findOneByUsername(createAuthDto.username);
+  async signUp(locale: string, signUpDto: SignUpDto): Promise<AuthModel<any>> {
+    const existUserEntity: UserEntity = await this.userService.findOneByUsername(signUpDto.username);
     if (existUserEntity !== null) {
       throw new ForbiddenException(locale === "en" ? responseMessage.signup.found_username.en : responseMessage.signup.found_username.th);
     }
-    const hash = await this.hashData(createAuthDto.password);
+    const hash = await this.hashData(signUpDto.password);
     const createUserDto: CreateUserDto = {
-      username: createAuthDto.username,
+      username: signUpDto.username,
       password: hash,
     }
     const newUser = await this.userService.create(createUserDto);
@@ -35,12 +36,12 @@ export class BusinessLogicService {
     });
   }
 
-  async signIn(locale: string, createAuthDto: CreateAuthDto): Promise<AuthModel<any>> {
-    const existUserEntity: UserEntity = await this.userService.findOneByUsername(createAuthDto.username);
+  async signIn(locale: string, signInDto: SignInDto): Promise<AuthModel<any>> {
+    const existUserEntity: UserEntity = await this.userService.findOneByUsername(signInDto.username);
     if (existUserEntity === null) {
       throw new ForbiddenException(locale === "en" ? responseMessage.signin.not_found_username.en : responseMessage.signin.not_found_username.th);
     }
-    const passwordMatches = await bcrypt.compare(createAuthDto.password, existUserEntity.password);
+    const passwordMatches = await bcrypt.compare(signInDto.password, existUserEntity.password);
     if (passwordMatches === false) {
       throw new ForbiddenException(locale === "en" ? responseMessage.signin.wrong_password.en : responseMessage.signin.wrong_password.th);
     }
@@ -54,11 +55,12 @@ export class BusinessLogicService {
 
   async signOut(locale: string, user_id: string): Promise<AuthModel<any>> {
     await this.userService.updateRefreshToken(user_id, null);
+    const user = await this.userService.findOneByUserId(user_id);
     return new AuthModel<any>({
       message: locale === "en" ? responseMessage.signout.success.en : responseMessage.signout.success.th,
       result: {
-        access_token: null,
-        refresh_token: null
+        access_token: user.refresh_token,
+        refresh_token: user.refresh_token
       },
     });
   }
@@ -98,8 +100,8 @@ export class BusinessLogicService {
           username: username
         },
         {
-          secret: "at-secret",
-          expiresIn: 15 * 60
+          secret: process.env.AT_SECRET,
+          expiresIn: 60 * 60
         }
       ),
       this.jwtService.signAsync(
@@ -108,7 +110,7 @@ export class BusinessLogicService {
           username: username
         },
         {
-          secret: "rt-secret",
+          secret: process.env.RT_SECRET,
           expiresIn: 7 * 24 * 60 * 60
         }
       )

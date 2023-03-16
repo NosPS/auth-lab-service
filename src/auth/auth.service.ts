@@ -1,18 +1,18 @@
 import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { SignInDto } from './dto/signin.dto';
 import { BusinessLogicService } from 'src/business_logic/business_logic.service';
 import AuthModel from './models/auth.model';
+import { SignUpDto } from './dto/signup.dto';
 
 @Injectable()
 export class AuthService {
   constructor(private businessLogicService: BusinessLogicService) { }
-  async signUp(locale: string, createAuthDto: CreateAuthDto): Promise<AuthModel<any>> {
-    return this.businessLogicService.signUp(locale, createAuthDto);
+  async signUp(locale: string, signUpDto: SignUpDto): Promise<AuthModel<any>> {
+    return this.businessLogicService.signUp(locale, signUpDto);
   }
 
-  async signIn(locale: string, createAuthDto: CreateAuthDto) {
-    return this.businessLogicService.signIn(locale, createAuthDto);
+  async signIn(locale: string, signInDto: SignInDto) {
+    return this.businessLogicService.signIn(locale, signInDto);
   }
 
   async signOut(locale: string, user_id: string) {
